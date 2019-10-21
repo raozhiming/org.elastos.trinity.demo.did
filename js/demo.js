@@ -43,40 +43,39 @@ function display_others_msg(content) {
 
 var commands = [
 // plugin commands
-    { cmd: "test",      fn: test,                   help: "test"  },
-    { cmd: "openjson",      fn: openjson,                   help: "openjson"  },
+    { cmd: "test",      fn: test,                   help: "test"        },
+    { cmd: "openjson",  fn: openjson,               help: "openjson"    },
     { cmd: "help",      fn: help,                   help: "help [cmd]"  },
     { cmd: "version",   fn: get_version,            help: "version"     },
     { cmd: "createdoc", fn: createDocument,         help: "createdoc json"     },
-    { cmd: "ccred",     fn: createCredential,       help: "ccred "     },
+    { cmd: "ccred",     fn: createCredential,       help: "ccred "      },
 
 // DidStore
-    { cmd: "init",     fn: initDIDStore,           help: "init"       },
-    { cmd: "hasp",     fn: hasPrivateID,           help: "hasp"       },
-    { cmd: "initp",    fn: initPrivateID,          help: "initp"      },
-    { cmd: "listdid",  fn: listDids,               help: "listdid type"      },
-    { cmd: "listc",    fn: listCredentials,        help: "listdid type"      },
-    { cmd: "newdid",   fn: newDID,                 help: "newdid"     },
-    { cmd: "storedid", fn: storeDid,               help: "storedid"     },
-    { cmd: "createdid",   fn: createDID,           help: "createdid"     },
-    { cmd: "storec",   fn: storeCredential,        help: "storec"     },
+    { cmd: "init",      fn: initDIDStore,           help: "init"         },
+    { cmd: "hasp",      fn: hasPrivateID,           help: "hasp"         },
+    { cmd: "initp",     fn: initPrivateID,          help: "initp"        },
+    { cmd: "listdid",   fn: listDids,               help: "listdid type" },
+    { cmd: "listc",     fn: listCredentials,        help: "listdid type" },
+    { cmd: "newdid",    fn: newDID,                 help: "newdid"       },
+    { cmd: "storedid",  fn: storeDid,               help: "storedid"     },
+    { cmd: "storec",    fn: storeCredential,        help: "storec"       },
 
 // DidDocment
-    { cmd: "getsub",    fn: getSubject,             help: "getsub"     },
-    { cmd: "getpkc",    fn: getPublicKeyCount,      help: "getpkc"     },
-    { cmd: "getdpk",    fn: getDefaultPublicKey,    help: "getdpk"     },
-    { cmd: "addc",     fn: addCredential,          help: "addvc"     },
+    { cmd: "getsub",    fn: getSubject,             help: "getsub"      },
+    { cmd: "getpkc",    fn: getPublicKeyCount,      help: "getpkc"      },
+    { cmd: "getdpk",    fn: getDefaultPublicKey,    help: "getdpk"      },
+    { cmd: "addc",      fn: addCredential,          help: "addvc"       },
+    { cmd: "sign",      fn: sign,                   help: "sign"        },
+    { cmd: "verify",    fn: verify,                help: "sign"        },
 // Did
-    { cmd: "getm",      fn: getMethod,              help: "getm"     },
-    { cmd: "getms",     fn: getMethodSpecificId,    help: "getms"     },
-    { cmd: "tostr",     fn: didToString,            help: "tostr"     },
+    { cmd: "getm",      fn: getMethod,              help: "getm"        },
+    { cmd: "getms",     fn: getMethodSpecificId,    help: "getms"       },
+    { cmd: "tostr",     fn: didToString,            help: "tostr"       },
 //PublicKey
-    { cmd: "getpkb",    fn: getPublicKeyBase58,     help: "getpkb"     },
-    { cmd: "getc",      fn: getController,          help: "getc"       },
+    { cmd: "getpkb",    fn: getPublicKeyBase58,     help: "getpkb"      },
+    { cmd: "getc",      fn: getController,          help: "getc"        },
 //Credential
-    { cmd: "geti",      fn: getInfo,                help: "geti"     },
-
-    { cmd: "exit",      fn: exit,                   help: "exit"        }
+    { cmd: "geti",      fn: getInfo,                help: "geti"        },
 ]
 
 function do_command(input) {
@@ -115,10 +114,6 @@ function help(args) {
     }
 }
 
-function exit(args) {
-    appService.close();
-}
-
 function onLauncher() {
     appService.launcher();
 }
@@ -128,9 +123,6 @@ function onClose() {
 }
 
 function test(args) {
-//     var dic = new Array();
-//     dic['a'] = "test1";
-//     dic['b'] = "test2";
     let dic = {
         test: "ok",
         test2: "test2"
@@ -140,15 +132,14 @@ function test(args) {
     jsArray[0] = "Saab";
     jsArray[1] = "Volvo";
     jsArray[2] = "BMW";
-//    dic.test = "ok";
-//    dic.test2= "test2";
+
 
     DIDPlugin.jsonArrayTest(
         function (version) {
             display_others_msg(version);
         },
         function (error) {
-            display_others_msg("Get version error! " + error);
+            display_others_msg("jsonArrayTest! " + error);
         },
         dic,
         jsArray
@@ -239,7 +230,7 @@ function initPrivateID(args) {
         function (error) {
             display_others_msg("initPrivateID error! " + error);
         },
-        "蓄蓄蓄蓄蓄蓄蓄蓄蓄蓄蓄蓄", "", true
+        "蓄蓄蓄蓄蓄蓄蓄蓄蓄蓄蓄蓄", "", "", true
     );
 }
 
@@ -281,17 +272,6 @@ function storeCredential(args) {
         },
         vc.objId
     );
-}
-
-function createDID(args) {
-//    didStore.newDID(
-//        function (ret) {
-//            display_others_msg("newDID: " + ret.objId);
-//        },
-//        function (error) {
-//            display_others_msg("newDID error! " + error);
-//        }
-//    );
 }
 
 function listDids(args) {
@@ -364,6 +344,33 @@ function addCredential(args) {
             display_others_msg("addCredential error! " + error);
         },
         vc.objId
+    );
+}
+
+function sign(args) {
+    diddocment.sign(
+        function (ret) {
+            signString = ret;
+            display_others_msg("sign: " + ret);
+        },
+        function (error) {
+            display_others_msg("sign error! " + error);
+        },
+        "123456",
+        "forsigntest  hello"
+    );
+}
+
+function verify(args) {
+    diddocment.verify(
+        function (ret) {
+            display_others_msg("verify: " + ret);
+        },
+        function (error) {
+            display_others_msg("verify error! " + error);
+        },
+        signString,
+        "forsigntest  hello"
     );
 }
 
@@ -463,12 +470,12 @@ function getInfo(args) {
         },
     );
 
-    vc.getPropertys(
+    vc.getProperties(
         function (ret) {
-            display_others_msg("getPropertys: " + JSON.stringify(ret));
+            display_others_msg("getProperties: " + JSON.stringify(ret));
         },
         function (error) {
-            display_others_msg("getPropertys error! " + error);
+            display_others_msg("getProperties error! " + error);
         },
     );
 
@@ -506,6 +513,7 @@ let did  = null;
 let publickey = null;
 let documentJson = null;
 let vc = null;
+let signString = null;
 
 var app = {
     // Application Constructor
