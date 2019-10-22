@@ -56,9 +56,13 @@ var commands = [
     { cmd: "initp",     fn: initPrivateID,          help: "initp"        },
     { cmd: "listdid",   fn: listDids,               help: "listdid type" },
     { cmd: "listc",     fn: listCredentials,        help: "listdid type" },
-    { cmd: "newdid",    fn: newDID,                 help: "newdid"       },
+    { cmd: "newdid",    fn: newDid,                 help: "newdid"       },
+    { cmd: "ddid",      fn: deleteDid,              help: "ddid"         },
     { cmd: "storedid",  fn: storeDid,               help: "storedid"     },
+    { cmd: "pd",        fn: publishDid,             help: "pd"           },
     { cmd: "storec",    fn: storeCredential,        help: "storec"       },
+    { cmd: "dc",        fn: deleteCredential,       help: "dc"           },
+    { cmd: "lc",        fn: loadCredential,         help: "lc"           },
 
 // DidDocment
     { cmd: "getsub",    fn: getSubject,             help: "getsub"      },
@@ -234,17 +238,29 @@ function initPrivateID(args) {
     );
 }
 
-function newDID(args) {
-    didStore.newDID(
+function newDid(args) {
+    didStore.newDid(
         function (ret) {
             diddocment = ret;
-            display_others_msg("newDID: " + ret.objId);
+            display_others_msg("newDid: " + ret.objId);
         },
         function (error) {
-            display_others_msg("newDID error! " + error);
+            display_others_msg("newDid error! " + error);
         },
         "123456",
         "didtest"
+    );
+}
+
+function deleteDid(args) {
+    didStore.deleteDid(
+        function (ret) {
+            display_others_msg("deleteDID: " + ret);
+        },
+        function (error) {
+            display_others_msg("deleteDID error! " + error);
+        },
+        didString
     );
 }
 
@@ -261,6 +277,20 @@ function storeDid(args) {
     );
 }
 
+function publishDid(args) {
+    didStore.publishDid(
+        function (ret) {
+            display_others_msg("publishDid: " + ret);
+        },
+        function (error) {
+            display_others_msg("publishDid error! " + error);
+        },
+        diddocment.objId,
+        didString,
+        "123456"
+    );
+}
+
 function storeCredential(args) {
     didStore.storeCredential(
         function (ret) {
@@ -274,9 +304,36 @@ function storeCredential(args) {
     );
 }
 
+function deleteCredential(args) {
+    didStore.deleteCredential(
+        function (ret) {
+            display_others_msg("deleteCredential: " + ret);
+        },
+        function (error) {
+            display_others_msg("deleteCredential error! " + error);
+        },
+        didString,
+        didUrlString
+    );
+}
+
+function loadCredential(args) {
+    didStore.loadCredential(
+        function (ret) {
+            display_others_msg("loadCredential: " + ret);
+        },
+        function (error) {
+            display_others_msg("loadCredential error! " + error);
+        },
+        didString,
+        vcId
+    );
+}
+
 function listDids(args) {
     didStore.listDids(
         function (ret) {
+            didString = ret.items[0]["did"];
             display_others_msg("listDids count: " + ret.items.length + "<br>" + JSON.stringify(ret.items));
         },
         function (error) {
@@ -290,6 +347,10 @@ function listDids(args) {
 function listCredentials(args) {
     didStore.listCredentials(
         function (ret) {
+            didUrlString = ret.items[0]["didurl"];
+            let index=didUrlString.indexOf("#");
+            didString = didUrlString.substring(0, index);
+            vcId = didUrlString.substring(index + 1);
             display_others_msg("listCredentials count: " + ret.items.length+ "<br>" + JSON.stringify(ret.items));
         },
         function (error) {
@@ -513,7 +574,11 @@ let did  = null;
 let publickey = null;
 let documentJson = null;
 let vc = null;
-let signString = null;
+let vcId = "";
+let signString = "";
+let didString = "";
+let didUrlString = "";
+
 
 var app = {
     // Application Constructor
