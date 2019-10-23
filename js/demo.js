@@ -168,8 +168,7 @@ function get_version(args) {
 function initDIDStore(args) {
      DIDPlugin.initDidStore(
          function (ret) {
-             didStore = ret;
-             display_others_msg("initDidStore success " + ret.objId);
+             display_others_msg("initDidStore success " + ret);
          },
          function (error) {
              display_others_msg("initDIDStore error! " + error);
@@ -220,9 +219,9 @@ function createCredential(args) {
 }
 
 function hasPrivateID(args) {
-    didStore.hasPrivateIdentity(
+    DIDPlugin.hasPrivateIdentity(
         function (ret) {
-            display_others_msg("hasPrivateIdentity: " + ret.hasPrivateIdentity);
+            display_others_msg("hasPrivateIdentity: " + ret.result);
         },
         function (error) {
             display_others_msg("hasPrivateIdentity error! " + error);
@@ -231,7 +230,7 @@ function hasPrivateID(args) {
 }
 
 function initPrivateID(args) {
-    didStore.initPrivateIdentity(
+    DIDPlugin.initPrivateIdentity(
         function (ret) {
             display_others_msg("initPrivateID: " + ret);
         },
@@ -243,7 +242,7 @@ function initPrivateID(args) {
 }
 
 function newDid(args) {
-    didStore.newDid(
+    DIDPlugin.newDid(
         function (ret) {
             diddocment = ret;
             display_others_msg("newDid: " + ret.objId);
@@ -257,7 +256,7 @@ function newDid(args) {
 }
 
 function deleteDid(args) {
-    didStore.deleteDid(
+    DIDPlugin.deleteDid(
         function (ret) {
             display_others_msg("deleteDID: " + ret);
         },
@@ -269,7 +268,7 @@ function deleteDid(args) {
 }
 
 function loadDid(args) {
-    didStore.loadDid(
+    DIDPlugin.loadDid(
         function (ret) {
             diddocment = ret;
             display_others_msg("loadDid: " + ret.objId);
@@ -282,7 +281,7 @@ function loadDid(args) {
 }
 
 function storeDid(args) {
-    didStore.storeDid(
+    DIDPlugin.storeDid(
         function (ret) {
             display_others_msg("storeDid: " + ret);
         },
@@ -295,7 +294,7 @@ function storeDid(args) {
 }
 
 function publishDid(args) {
-    didStore.publishDid(
+    DIDPlugin.publishDid(
         function (ret) {
             display_others_msg("publishDid: " + ret);
         },
@@ -309,7 +308,7 @@ function publishDid(args) {
 }
 
 function updateDid(args) {
-    didStore.updateDid(
+    DIDPlugin.updateDid(
         function (ret) {
             display_others_msg("publishDid: " + ret);
         },
@@ -323,7 +322,7 @@ function updateDid(args) {
 }
 
 function storeCredential(args) {
-    didStore.storeCredential(
+    DIDPlugin.storeCredential(
         function (ret) {
             publickey = ret;
             display_others_msg("storeCredential: " + ret);
@@ -336,7 +335,7 @@ function storeCredential(args) {
 }
 
 function deleteCredential(args) {
-    didStore.deleteCredential(
+    DIDPlugin.deleteCredential(
         function (ret) {
             display_others_msg("deleteCredential: " + ret);
         },
@@ -349,7 +348,7 @@ function deleteCredential(args) {
 }
 
 function loadCredential(args) {
-    didStore.loadCredential(
+    DIDPlugin.loadCredential(
         function (ret) {
             display_others_msg("loadCredential: " + ret);
         },
@@ -362,7 +361,7 @@ function loadCredential(args) {
 }
 
 function listDids(args) {
-    didStore.listDids(
+    DIDPlugin.listDids(
         function (ret) {
             didString = ret.items[0]["did"];
             display_others_msg("listDids count: " + ret.items.length + "<br>" + JSON.stringify(ret.items));
@@ -375,7 +374,7 @@ function listDids(args) {
 }
 
 function listCredentials(args) {
-    didStore.listCredentials(
+    DIDPlugin.listCredentials(
         function (ret) {
             didUrlString = ret.items[0]["didurl"];
             let index=didUrlString.indexOf("#");
@@ -473,7 +472,7 @@ function sign(args) {
             display_others_msg("sign error! " + error);
         },
         "123456",
-        "forsigntest  hello"
+        args[1]
     );
 }
 
@@ -486,7 +485,7 @@ function verify(args) {
             display_others_msg("verify error! " + error);
         },
         signString,
-        "forsigntest  hello"
+        args[1]
     );
 }
 
@@ -594,8 +593,6 @@ function getInfo(args) {
             display_others_msg("getProperties error! " + error);
         },
     );
-
-
 }
 
 function openjson(args) {
@@ -622,8 +619,6 @@ function openLocalFile(filename){
     });
 }
 
-
-let didStore = null;
 let diddocment = null;
 let did  = null;
 let publickey = null;
