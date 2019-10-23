@@ -58,8 +58,10 @@ var commands = [
     { cmd: "listc",     fn: listCredentials,        help: "listdid type" },
     { cmd: "newdid",    fn: newDid,                 help: "newdid"       },
     { cmd: "ddid",      fn: deleteDid,              help: "ddid"         },
+    { cmd: "ld",        fn: loadDid,                help: "ld"         },
     { cmd: "storedid",  fn: storeDid,               help: "storedid"     },
     { cmd: "pd",        fn: publishDid,             help: "pd"           },
+    { cmd: "ud",        fn: updateDid,              help: "ud"           },
     { cmd: "storec",    fn: storeCredential,        help: "storec"       },
     { cmd: "dc",        fn: deleteCredential,       help: "dc"           },
     { cmd: "lc",        fn: loadCredential,         help: "lc"           },
@@ -68,6 +70,8 @@ var commands = [
     { cmd: "getsub",    fn: getSubject,             help: "getsub"      },
     { cmd: "getpkc",    fn: getPublicKeyCount,      help: "getpkc"      },
     { cmd: "getdpk",    fn: getDefaultPublicKey,    help: "getdpk"      },
+    { cmd: "getpk",     fn: getPublicKey,           help: "getpk"       },
+    { cmd: "getpks",    fn: getPublicKeys,          help: "getpks"       },
     { cmd: "addc",      fn: addCredential,          help: "addvc"       },
     { cmd: "sign",      fn: sign,                   help: "sign"        },
     { cmd: "verify",    fn: verify,                help: "sign"        },
@@ -206,7 +210,7 @@ function createCredential(args) {
         function (error) {
             display_others_msg("createCredential error! " + error);
         },
-        did.objId,
+        didString,
         "cred-1",
         types,
         15,
@@ -264,6 +268,19 @@ function deleteDid(args) {
     );
 }
 
+function loadDid(args) {
+    didStore.loadDid(
+        function (ret) {
+            diddocment = ret;
+            display_others_msg("loadDid: " + ret.objId);
+        },
+        function (error) {
+            display_others_msg("loadDid error! " + error);
+        },
+        didString
+    );
+}
+
 function storeDid(args) {
     didStore.storeDid(
         function (ret) {
@@ -286,7 +303,21 @@ function publishDid(args) {
             display_others_msg("publishDid error! " + error);
         },
         diddocment.objId,
-        didString,
+        publickeyUrl,
+        "123456"
+    );
+}
+
+function updateDid(args) {
+    didStore.updateDid(
+        function (ret) {
+            display_others_msg("publishDid: " + ret);
+        },
+        function (error) {
+            display_others_msg("publishDid error! " + error);
+        },
+        diddocment.objId,
+        publickeyUrl,
         "123456"
     );
 }
@@ -343,7 +374,6 @@ function listDids(args) {
     );
 }
 
-
 function listCredentials(args) {
     didStore.listCredentials(
         function (ret) {
@@ -356,7 +386,7 @@ function listCredentials(args) {
         function (error) {
             display_others_msg("listCredentials error! " + error);
         },
-        did.objId
+        didString
     );
 }
 
@@ -393,6 +423,31 @@ function getDefaultPublicKey(args) {
         function (error) {
             display_others_msg("getDefaultPublicKey error! " + error);
         },
+    );
+}
+
+function getPublicKey(args) {
+    diddocment.getPublicKey(
+        function (ret) {
+            publickey = ret;
+            display_others_msg("getPublicKey: " + ret.objId);
+        },
+        function (error) {
+            display_others_msg("getPublicKey error! " + error);
+        },
+        publickeyUrl
+    );
+}
+
+function getPublicKeys(args) {
+    diddocment.getPublicKeys(
+        function (ret) {
+            publickeyUrl = ret.items[0]["id"];
+            display_others_msg("getPublicKeys count: " + ret.items.length+ "<br>" + JSON.stringify(ret.items));
+        },
+        function (error) {
+            display_others_msg("getPublicKeys error! " + error);
+        }
     );
 }
 
