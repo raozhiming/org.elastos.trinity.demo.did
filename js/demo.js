@@ -49,6 +49,8 @@ var commands = [
     { cmd: "version",   fn: get_version,            help: "version"     },
     { cmd: "createdoc", fn: createDocument,         help: "createdoc json"     },
     { cmd: "ccred",     fn: createCredential,       help: "ccred "      },
+    { cmd: "gm",        fn: generateMnemonic,       help: "gm "         },
+    { cmd: "ismvalid",  fn: isMnemonicValid,        help: "ismvalid "   },
 
 // DidStore
     { cmd: "init",      fn: initDIDStore,           help: "init"         },
@@ -168,7 +170,8 @@ function get_version(args) {
 function initDIDStore(args) {
      DIDPlugin.initDidStore(
          function (ret) {
-             display_others_msg("initDidStore success " + ret);
+             didStore = ret;
+             display_others_msg("initDidStore success " + ret.objId);
          },
          function (error) {
              display_others_msg("initDIDStore error! " + error.message);
@@ -177,7 +180,7 @@ function initDIDStore(args) {
  }
 
 function createDocument(args) {
-    DIDPlugin.CreateDIDDocumentFromJson(
+    DIDPlugin.createDIDDocumentFromJson(
         function (ret) {
             diddocment = ret;
             display_others_msg("CreateDIDDocumentFromJson success " + ret.objId);
@@ -201,7 +204,7 @@ function createCredential(args) {
     }
 
 
-    DIDPlugin.CreateCredential(
+    didStore.CreateCredential(
         function (ret) {
             vc = ret;
             display_others_msg("createCredential success " + ret.objId);
@@ -218,10 +221,36 @@ function createCredential(args) {
     );
 }
 
-function hasPrivateID(args) {
-    DIDPlugin.hasPrivateIdentity(
+function generateMnemonic(args) {
+    DIDPlugin.generateMnemonic(
         function (ret) {
-            display_others_msg("hasPrivateIdentity: " + ret.result);
+            mnemonic = ret;
+            display_others_msg("generateMnemonic: " + ret);
+        },
+        function (error) {
+            display_others_msg("generateMnemonic error! " + error.message);
+        },
+        args[1]
+    );
+}
+
+function isMnemonicValid(args) {
+    DIDPlugin.isMnemonicValid(
+        function (ret) {
+            display_others_msg("isMnemonicValid: " + ret);
+        },
+        function (error) {
+            display_others_msg("isMnemonicValid error! " + error.message);
+        },
+        args[1],
+        mnemonic
+    );
+}
+
+function hasPrivateID(args) {
+    didStore.hasPrivateIdentity(
+        function (ret) {
+            display_others_msg("hasPrivateIdentity: " + ret);
         },
         function (error) {
             display_others_msg("hasPrivateIdentity error! " + error.message);
@@ -230,7 +259,7 @@ function hasPrivateID(args) {
 }
 
 function initPrivateID(args) {
-    DIDPlugin.initPrivateIdentity(
+    didStore.initPrivateIdentity(
         function (ret) {
             display_others_msg("initPrivateID: " + ret);
         },
@@ -242,7 +271,7 @@ function initPrivateID(args) {
 }
 
 function newDid(args) {
-    DIDPlugin.newDid(
+    didStore.newDid(
         function (ret) {
             diddocment = ret;
             display_others_msg("newDid: " + ret.objId);
@@ -256,7 +285,7 @@ function newDid(args) {
 }
 
 function deleteDid(args) {
-    DIDPlugin.deleteDid(
+    didStore.deleteDid(
         function (ret) {
             display_others_msg("deleteDID: " + ret);
         },
@@ -268,7 +297,7 @@ function deleteDid(args) {
 }
 
 function loadDid(args) {
-    DIDPlugin.loadDid(
+    didStore.loadDid(
         function (ret) {
             diddocment = ret;
             display_others_msg("loadDid: " + ret.objId);
@@ -281,7 +310,7 @@ function loadDid(args) {
 }
 
 function storeDid(args) {
-    DIDPlugin.storeDid(
+    didStore.storeDid(
         function (ret) {
             display_others_msg("storeDid: " + ret);
         },
@@ -294,7 +323,7 @@ function storeDid(args) {
 }
 
 function publishDid(args) {
-    DIDPlugin.publishDid(
+    didStore.publishDid(
         function (ret) {
             display_others_msg("publishDid: " + ret);
         },
@@ -308,7 +337,7 @@ function publishDid(args) {
 }
 
 function updateDid(args) {
-    DIDPlugin.updateDid(
+    didStore.updateDid(
         function (ret) {
             display_others_msg("publishDid: " + ret);
         },
@@ -322,7 +351,7 @@ function updateDid(args) {
 }
 
 function storeCredential(args) {
-    DIDPlugin.storeCredential(
+    didStore.storeCredential(
         function (ret) {
             publickey = ret;
             display_others_msg("storeCredential: " + ret);
@@ -335,7 +364,7 @@ function storeCredential(args) {
 }
 
 function deleteCredential(args) {
-    DIDPlugin.deleteCredential(
+    didStore.deleteCredential(
         function (ret) {
             display_others_msg("deleteCredential: " + ret);
         },
@@ -348,7 +377,7 @@ function deleteCredential(args) {
 }
 
 function loadCredential(args) {
-    DIDPlugin.loadCredential(
+    didStore.loadCredential(
         function (ret) {
             vc = ret;
             display_others_msg("loadCredential: " + ret.objId);
@@ -362,7 +391,7 @@ function loadCredential(args) {
 }
 
 function listDids(args) {
-    DIDPlugin.listDids(
+    didStore.listDids(
         function (ret) {
             didString = ret.items[0]["did"];
             display_others_msg("listDids count: " + ret.items.length + "<br>" + JSON.stringify(ret.items));
@@ -375,7 +404,7 @@ function listDids(args) {
 }
 
 function listCredentials(args) {
-    DIDPlugin.listCredentials(
+    didStore.listCredentials(
         function (ret) {
             didUrlString = ret.items[0]["didurl"];
             let index=didUrlString.indexOf("#");
@@ -620,6 +649,7 @@ function openLocalFile(filename){
     });
 }
 
+let didStore = null;
 let diddocment = null;
 let did  = null;
 let publickey = null;
@@ -629,6 +659,7 @@ let vcId = "";
 let signString = "";
 let didString = "";
 let didUrlString = "";
+let mnemonic = ""
 
 
 var app = {
